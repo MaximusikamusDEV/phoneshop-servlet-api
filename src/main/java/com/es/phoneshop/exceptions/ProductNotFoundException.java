@@ -1,7 +1,6 @@
-package com.es.phoneshop.model.product;
+package com.es.phoneshop.exceptions;
 
 public class ProductNotFoundException extends Exception {
-
     Long productId;
 
     public ProductNotFoundException(Long productId) {
@@ -10,5 +9,10 @@ public class ProductNotFoundException extends Exception {
 
     public Long getProductId() {
         return productId;
+    }
+
+    @Override
+    public String toString() {
+        return "ProductNotFoundException {productId= " + productId + '}';
     }
 }

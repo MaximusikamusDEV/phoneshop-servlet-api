@@ -1,26 +1,33 @@
-package com.es.phoneshop.model.product;
+package com.es.phoneshop.productdao;
 
+import com.es.phoneshop.model.product.Product;
+import com.es.phoneshop.exceptions.ProductNotFoundException;
+import com.es.phoneshop.sortenums.SortField;
+import com.es.phoneshop.sortenums.SortOrder;
 import org.codehaus.plexus.util.StringUtils;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.Optional;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-
 public class HashMapProductDao implements ProductDao {
-
-    private long maxId;
+    private static final String PRODUCT_NOT_FOUND_DELETE_MESSAGE = "Product with id {} not found, While delete";
+    private static final String PRODUCT_NOT_FOUND_GET_MESSAGE = "Product with id {} not found. While getProduct";
+    private static final Logger logger = LoggerFactory.getLogger(HashMapProductDao.class);
+    private final AtomicLong maxId;
     private final Map<Long, Product> products;
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
     private HashMapProductDao() {
         this.products = new HashMap<>();
-        maxId = 0L;
+        maxId = new AtomicLong(0);
     }
 
     private static class SingletonHolder {
@@ -39,6 +46,7 @@ public class HashMapProductDao implements ProductDao {
             Product product = products.get(id);
 
             if (product == null) {
+                logger.error(PRODUCT_NOT_FOUND_GET_MESSAGE, id);
                 throw new ProductNotFoundException(id);
             }
 
@@ -53,7 +61,6 @@ public class HashMapProductDao implements ProductDao {
         lock.readLock().lock();
 
         try {
-
             //First of all comparing by relevance
             Comparator<Product> comparator = Comparator.comparingDouble(product ->
                     (-1) * calculateRelevance(product, findProductQuery)
@@ -82,7 +89,6 @@ public class HashMapProductDao implements ProductDao {
                     )
                     .collect(Collectors.toList());
 
-
             return filteredProducts;
         } finally {
             lock.readLock().unlock();
@@ -95,7 +101,7 @@ public class HashMapProductDao implements ProductDao {
 
         try {
             if (product.getId() == null) {
-                product.setId(maxId++);
+                product.setId(maxId.getAndIncrement());
                 products.put(product.getId(), product);
             } else {
                 products.put(product.getId(), product);
@@ -111,6 +117,7 @@ public class HashMapProductDao implements ProductDao {
 
         try {
             if (products.remove(id) == null) {
+                logger.error(PRODUCT_NOT_FOUND_DELETE_MESSAGE, id);
                 throw new ProductNotFoundException(id);
             }
         } finally {
@@ -148,9 +155,6 @@ public class HashMapProductDao implements ProductDao {
         if(partsProductDescription.length == 0 || partsFindProductQuery.length == 0)
             return 0.0;
 
-
-
-
         //Count same words in Query and Description
         long identicalWords = Stream.of(partsFindProductQuery)
                 .filter(productDescription::contains)
@@ -162,6 +166,4 @@ public class HashMapProductDao implements ProductDao {
 
         return countDescriptionMatches * countQueryMatches * 100;
     }
-
-
 }

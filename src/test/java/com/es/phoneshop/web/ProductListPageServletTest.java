@@ -1,21 +1,18 @@
 package com.es.phoneshop.web;
 
 import jakarta.servlet.ServletConfig;
+import jakarta.servlet.http.HttpSession;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -29,11 +26,15 @@ public class ProductListPageServletTest {
     private RequestDispatcher requestDispatcher;
     @Mock
     private ServletConfig servletConfig;
+    @Mock
+    private HttpSession session;
 
     private ProductListPageServlet servlet;
 
     @Before
     public void setup() throws ServletException {
+        when(request.getSession()).thenReturn(session);
+        when(session.getAttribute(anyString())).thenReturn(null);
         servlet = new ProductListPageServlet();
         servlet.init(servletConfig);
         when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
@@ -46,5 +47,4 @@ public class ProductListPageServletTest {
         verify(request).setAttribute(eq("products"), anyList());
         verify(requestDispatcher).forward(request, response);
     }
-
 }

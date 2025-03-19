@@ -1,0 +1,24 @@
+.recently-viewed-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 10px 0;
+}
+
+.recently-viewed-box{
+    display: inline-block;
+    background: #ffffff;
+    border: 1px solid #333131;
+    padding: 10px;
+    width: 100px;
+    text-align: center;
+    position: relative;
+}
+
+.recently-viewed-img{
+    max-width: 64px;
+    object-fit: contain;
+}
+

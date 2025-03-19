@@ -1,19 +1,22 @@
 package com.es.phoneshop.model.product;
 
+import com.es.phoneshop.exceptions.ProductNotFoundException;
+import com.es.phoneshop.productdao.HashMapProductDao;
+import com.es.phoneshop.productdao.ProductDao;
+import com.es.phoneshop.sortenums.SortField;
+import com.es.phoneshop.sortenums.SortOrder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.List;
 import java.util.Map;
-
+import java.util.concurrent.atomic.AtomicLong;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
-
 
 public class HashMapProductDaoTest
 {
@@ -29,8 +32,6 @@ public class HashMapProductDaoTest
         testProduct = new Product("test-product", "Samsung Galaxy S", new BigDecimal(100), usd, 100, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S.jpg");
     }
 
-
-
     @After
     public void clear() throws NoSuchFieldException, IllegalAccessException {
         Field productField = HashMapProductDao.class.getDeclaredField("products");
@@ -39,7 +40,7 @@ public class HashMapProductDaoTest
 
         Field maxIdField = HashMapProductDao.class.getDeclaredField("maxId");
         maxIdField.setAccessible(true);
-        maxIdField.set(productDao, 0);
+        maxIdField.set(productDao, new AtomicLong(0));
     }
 
     @Test
@@ -87,6 +88,7 @@ public class HashMapProductDaoTest
         productDao.delete(0L);
         productDao.getProduct(0L);
     }
+
     @Test
     public void testEmptyFilterProducts() throws ProductNotFoundException {
         Product testProductWithoutPrice = new Product("test-product1", "Samsung Galaxy S",  100, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S.jpg");
@@ -133,12 +135,7 @@ public class HashMapProductDaoTest
 
         List<Product> result2 = productDao.findProducts("Samsung Galaxy S", SortField.PRICE, SortOrder.DESC);
 
-
         assertNotNull(result);
         assertEquals("Samsung Galaxy S III", result2.get(0).getDescription());
-
-
-
     }
-
 }
