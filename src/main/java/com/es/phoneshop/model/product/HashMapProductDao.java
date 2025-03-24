@@ -131,9 +131,10 @@ public class HashMapProductDao implements ProductDao {
             return true;
 
         String[] partsFindProductQuery = findProductQuery.toLowerCase().split(" ");
+        String productDescription = product.getDescription().toLowerCase();
 
         return Stream.of(partsFindProductQuery)
-                .anyMatch(product.getDescription().toLowerCase()::contains);
+                .anyMatch(productDescription::contains);
     }
 
     private double calculateRelevance(Product product, String findProductQuery) {
@@ -143,6 +144,12 @@ public class HashMapProductDao implements ProductDao {
         String productDescription = product.getDescription().toLowerCase();
         String[] partsProductDescription = productDescription.split(" ");
         String[] partsFindProductQuery = findProductQuery.toLowerCase().split(" ");
+
+        if(partsProductDescription.length == 0 || partsFindProductQuery.length == 0)
+            return 0.0;
+
+
+
 
         //Count same words in Query and Description
         long identicalWords = Stream.of(partsFindProductQuery)
