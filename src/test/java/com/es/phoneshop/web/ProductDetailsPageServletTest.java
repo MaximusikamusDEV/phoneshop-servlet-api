@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpSession;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import java.io.IOException;
@@ -72,9 +73,12 @@ public class ProductDetailsPageServletTest {
     public void testDoGetWithoutProducts() throws ServletException, IOException {
         when(request.getPathInfo()).thenReturn("/10000");
 
+        ArgumentCaptor<ProductNotFoundException> exceptionCaptor =
+                ArgumentCaptor.forClass(ProductNotFoundException.class);
+
         servlet.doGet(request, response);
 
-        verify(request).setAttribute(eq("exception"), eq("Product not found: 10000"));
+        verify(request).setAttribute(eq("exception"), exceptionCaptor.capture());
         verify(request).getRequestDispatcher("/WEB-INF/pages/errorProductNotFound.jsp");
         verify(requestDispatcher).forward(request, response);
         verify(request, never()).setAttribute(eq("product"), any(Product.class));
@@ -90,10 +94,8 @@ public class ProductDetailsPageServletTest {
         servlet.doPost(request, response);
 
         verify(request).setAttribute(eq("error"), eq("Quantity is not a number "));
-
         verify(request).getRequestDispatcher(anyString());
         verify(requestDispatcher).forward(request, response);
-
         verify(response, never()).sendRedirect(anyString());
     }
 }

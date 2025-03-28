@@ -3,7 +3,7 @@ package com.es.phoneshop.web;
 import com.es.phoneshop.cart.Cart;
 import com.es.phoneshop.cart.CartService;
 import com.es.phoneshop.cart.DefaultCartService;
-import com.es.phoneshop.cart.RecentlyViewedService;
+import com.es.phoneshop.model.product.RecentlyViewedService;
 import com.es.phoneshop.exceptions.ProductNotFoundException;
 import com.es.phoneshop.exceptions.ProductOutOfStockException;
 import com.es.phoneshop.model.product.Product;
@@ -22,7 +22,7 @@ import java.text.ParseException;
 
 public class ProductDetailsPageServlet extends HttpServlet {
     private static final String INIT_ERROR_MESSAGE = "ProductDao or CartService or RecentlyViewedService is null";
-    private static final String INVALID_PRODUCT_ID = "Invalid product ID";
+    private static final String INVALID_PRODUCT_ID = "Invalid product ID ";
     private static final String PRODUCT_NOT_FOUND = "Product not found: ";
     private static final String EMPTY_QUANTITY_MESSAGE = "Quantity is missing or empty";
     private static final String ATTRIBUTE_ERROR = "error";
@@ -31,7 +31,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
     private static final String ATTRIBUTE_CART = "cart";
     private static final String ATTRIBUTE_PRODUCT = "product";
     private static final String ATTRIBUTE_RECENTLY_VIEWED = "recentlyViewed";
-    private static final String ADDED_TO_CART_MESSAGE = "ProductAddedToCart";
+    private static final String ADDED_TO_CART_MESSAGE = "Product Added To Cart";
     private static final String PRODUCT_OUT_OF_STOCK = "Product is out of stock.";
     private static final String PRODUCT_OUT_OF_STOCK_AVAILABLE = "Product is out of stock. Available %s";
     private static final String REDIRECT_MESSAGE = "?message=";
@@ -58,7 +58,16 @@ public class ProductDetailsPageServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Long productId = getProductIdFromUri(request);
+        Long productId;
+
+        try {
+            productId = getProductIdFromUri(request);
+        }catch (NumberFormatException | NullPointerException e) {
+            handleException(request, response, INVALID_PRODUCT_ID,
+                    INVALID_PRODUCT_ID, PagePaths.error());
+            return;
+        }
+
         Product product;
 
         try {
@@ -67,10 +76,10 @@ public class ProductDetailsPageServlet extends HttpServlet {
             setRecentlyViewed(request, product);
             request.getRequestDispatcher(PagePaths.productDetails()).forward(request, response);
         } catch (NumberFormatException e) {
-            handleException(request, response, INVALID_PRODUCT_ID + getProductIdFromUri(request),
+            handleException(request, response, INVALID_PRODUCT_ID + e,
                     INVALID_PRODUCT_ID, PagePaths.error());
         } catch (ProductNotFoundException e) {
-            handleException(request, response, PRODUCT_NOT_FOUND + productId,
+            handleException(request, response, PRODUCT_NOT_FOUND + productId + e,
                     PRODUCT_NOT_FOUND + productId, PagePaths.productNotFound());
         }
     }
@@ -78,12 +87,20 @@ public class ProductDetailsPageServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         int quantity;
-        Long productId = getProductIdFromUri(req);
+        Long productId;
+
+        try {
+            productId = getProductIdFromUri(req);
+        }catch (NumberFormatException | NullPointerException e) {
+            handleException(req, resp, INVALID_PRODUCT_ID + e,
+                    INVALID_PRODUCT_ID, PagePaths.error());
+            return;
+        }
 
         try {
             quantity = getQuantity(req);
         } catch (ParseException e) {
-            handleError(req, resp, QUANTITY_NOT_NUMBER_MESSAGE + req.getParameter(PARAMETER_QUANTITY),
+            handleError(req, resp, QUANTITY_NOT_NUMBER_MESSAGE + req.getParameter(PARAMETER_QUANTITY) + e,
                     QUANTITY_NOT_NUMBER_MESSAGE);
             return;
         } catch (NullPointerException e){
@@ -94,7 +111,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
         try {
             addToCartService(req, productId, quantity);
         } catch (ProductOutOfStockException e) {
-            handleError(req, resp, PRODUCT_OUT_OF_STOCK,
+            handleError(req, resp, PRODUCT_OUT_OF_STOCK + e,
                     String.format(PRODUCT_OUT_OF_STOCK_AVAILABLE, e.getAvailableStock()));
             return;
         }
@@ -138,11 +155,23 @@ public class ProductDetailsPageServlet extends HttpServlet {
     }
 
     private Long getProductIdFromUri(HttpServletRequest request) {
-        return Long.valueOf(request.getPathInfo().substring(1));
+        String productId = request.getPathInfo();
+
+        if(productId == null || StringUtils.isEmpty(productId)) {
+            throw new NullPointerException();
+        }
+
+        productId = productId.substring(1);
+
+        try {
+            return Long.valueOf(productId);
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException();
+        }
     }
 
     private void handleException(HttpServletRequest req, HttpServletResponse resp, String logMessage,
-                                 String exceptionMessage, String forwardPage) throws ServletException, IOException {
+                                 Object exceptionMessage, String forwardPage) throws ServletException, IOException {
         logger.error(logMessage);
         req.setAttribute(ATTRIBUTE_EXCEPTION, exceptionMessage);
         req.getRequestDispatcher(forwardPage).forward(req, resp);

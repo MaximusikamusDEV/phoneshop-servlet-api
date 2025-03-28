@@ -1,6 +1,5 @@
-package com.es.phoneshop.cart;
+package com.es.phoneshop.model.product;
 
-import com.es.phoneshop.model.product.Product;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.util.LinkedList;

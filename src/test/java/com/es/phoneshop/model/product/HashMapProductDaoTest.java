@@ -27,7 +27,6 @@ public class HashMapProductDaoTest
     @Before
     public void setup() {
         productDao = HashMapProductDao.getInstance();
-
         usd = Currency.getInstance("USD");
         testProduct = new Product("test-product", "Samsung Galaxy S", new BigDecimal(100), usd, 100, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S.jpg");
     }
@@ -84,7 +83,6 @@ public class HashMapProductDaoTest
     public void testDeleteProduct() throws ProductNotFoundException {
         Product newTestProduct = new Product(20L, "newCodeAndNumb", "Samsung Galaxy S", new BigDecimal(100), usd, 100, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S.jpg");
         productDao.save(newTestProduct);
-
         productDao.delete(0L);
         productDao.getProduct(0L);
     }
