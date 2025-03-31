@@ -1,0 +1,9 @@
+.sort-arrow-active {
+  color: black;
+  font-size: 24px;
+}
+
+.sort-arrow-inactive {
+  color: gray;
+  font-size: 24px;
+}
