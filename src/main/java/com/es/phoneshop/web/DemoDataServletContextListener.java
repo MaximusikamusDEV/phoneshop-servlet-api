@@ -1,17 +1,14 @@
 package com.es.phoneshop.web;
 
-import com.es.phoneshop.model.product.HashMapProductDao;
+import com.es.phoneshop.productdao.HashMapProductDao;
 import com.es.phoneshop.model.product.PriceHistoryProduct;
 import com.es.phoneshop.model.product.Product;
-import com.es.phoneshop.model.product.ProductDao;
+import com.es.phoneshop.productdao.ProductDao;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
-
 import java.math.BigDecimal;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -22,12 +19,15 @@ import java.util.Comparator;
 
 public class DemoDataServletContextListener implements ServletContextListener {
 
+    private static final String PRODUCT_ADDED_SUCCESS_MESSAGE = "Product has been inserted successfully {}";
+    private static final String PRODUCT_ADDED_FAIL_MESSAGE = "Failed to set sample history to product {}";
+    private static final String DEMO_DATA_INSERT_SUCCESS_MESSAGE = "Demo data has been inserted successfully";
+    private static final String GET_SAMPLE_HISTORY_FAIL_MESSAGE = "Failed to get sample history";
     private static final Logger logger = LoggerFactory.getLogger(DemoDataServletContextListener.class);
     private final ProductDao productDao;
     private static final String INSERT_DEMO_DATA = "insertSampleData";
     private static final int MAX_AMOUNT_TEST_HISTORY_PRICES = 20;
     private static final String CURRENCY_CODE_USD = "USD";
-
 
     public DemoDataServletContextListener() {
         this.productDao = HashMapProductDao.getInstance();
@@ -35,7 +35,6 @@ public class DemoDataServletContextListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent event) {
-
         boolean isDemoData = Boolean.parseBoolean(event.getServletContext().getInitParameter(INSERT_DEMO_DATA));
 
         if (isDemoData) {
@@ -44,17 +43,17 @@ public class DemoDataServletContextListener implements ServletContextListener {
 
                         try {
                             setSampleHistory(product);
-                            logger.debug("Product has been inserted successfully {}", product.getDescription());
+                            logger.debug(PRODUCT_ADDED_SUCCESS_MESSAGE, product.getDescription());
                         } catch (Exception e) {
-                            logger.error("Failed to set sample history to product {}", product.getId(), e);
+                            logger.error(PRODUCT_ADDED_FAIL_MESSAGE, product.getId(), e);
                         }
 
                         productDao.save(product);
                 });
 
-                    logger.info("Demo data has been inserted successfully");
+                    logger.info(DEMO_DATA_INSERT_SUCCESS_MESSAGE);
             } catch (Exception e) {
-                logger.error("Failed to set sample history", e);
+                logger.error(GET_SAMPLE_HISTORY_FAIL_MESSAGE, e);
             }
         }
     }
@@ -63,7 +62,6 @@ public class DemoDataServletContextListener implements ServletContextListener {
     public void contextDestroyed(ServletContextEvent sce) {
         ServletContextListener.super.contextDestroyed(sce);
     }
-
 
     public static List<Product> getSampleProducts() throws Exception {
         Currency usd = Currency.getInstance(CURRENCY_CODE_USD);
@@ -82,12 +80,10 @@ public class DemoDataServletContextListener implements ServletContextListener {
         result.add(new Product("simc61", "Siemens C61", new BigDecimal(80), usd, 30, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Siemens/Siemens%20C61.jpg"));
         result.add(new Product("simsxg75", "Siemens SXG75", new BigDecimal(150), usd, 40, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Siemens/Siemens%20SXG75.jpg"));
 
-
         return result;
     }
 
     public static void setSampleHistory(Product product) throws Exception {
-
         List<PriceHistoryProduct> newHistory = product.getPriceHistoryProductList();
 
         if(newHistory == null) {
@@ -97,7 +93,6 @@ public class DemoDataServletContextListener implements ServletContextListener {
         BigDecimal minPrice = new BigDecimal(200);
         BigDecimal maxPrice = new BigDecimal(3000);
         BigDecimal range = maxPrice.subtract(minPrice);
-
 
         LocalDate dateFrom = LocalDate.of(2010, 1, 1);
         LocalDate dateTo = LocalDate.of(2025, 3, 16);
@@ -113,6 +108,4 @@ public class DemoDataServletContextListener implements ServletContextListener {
 
         product.setPriceHistoryProductList(newHistory);
     }
-
-
 }

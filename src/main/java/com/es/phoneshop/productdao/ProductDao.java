@@ -1,5 +1,9 @@
-package com.es.phoneshop.model.product;
+package com.es.phoneshop.productdao;
 
+import com.es.phoneshop.model.product.Product;
+import com.es.phoneshop.exceptions.ProductNotFoundException;
+import com.es.phoneshop.sortenums.SortField;
+import com.es.phoneshop.sortenums.SortOrder;
 import java.util.List;
 
 public interface ProductDao {
