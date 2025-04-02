@@ -1,7 +1,6 @@
 <%@ tag trimDirectiveWhitespaces="true" %>
 <%@ attribute name="pageTitle" required="true" %>
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
-
 <html>
 <head>
     <title>${pageTitle}</title>
@@ -14,6 +13,11 @@
         <img src="${pageContext.servletContext.contextPath}/images/logo.svg"/>
         PhoneShop
     </a>
+
+    <a class="cart" href="${pageContext.servletContext.contextPath}/cart">
+    <jsp:include page="/cart/minicart/"/>
+    </a>
+
 </header>
 <main>
     <jsp:doBody/>
@@ -26,4 +30,13 @@
 </footer>
 
 </body>
+
+<script language="javascript">
+    window.addEventListener('pageshow', function(event) {
+        if (event.persisted) {
+            location.reload();
+        }
+    });
+</script>
+
 </html>

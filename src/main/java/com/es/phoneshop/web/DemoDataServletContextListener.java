@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Comparator;
 
 public class DemoDataServletContextListener implements ServletContextListener {
-
     private static final String PRODUCT_ADDED_SUCCESS_MESSAGE = "Product has been inserted successfully {}";
     private static final String PRODUCT_ADDED_FAIL_MESSAGE = "Failed to set sample history to product {}";
     private static final String DEMO_DATA_INSERT_SUCCESS_MESSAGE = "Demo data has been inserted successfully";
@@ -50,7 +49,6 @@ public class DemoDataServletContextListener implements ServletContextListener {
 
                         productDao.save(product);
                 });
-
                     logger.info(DEMO_DATA_INSERT_SUCCESS_MESSAGE);
             } catch (Exception e) {
                 logger.error(GET_SAMPLE_HISTORY_FAIL_MESSAGE, e);

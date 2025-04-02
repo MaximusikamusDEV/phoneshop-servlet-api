@@ -29,7 +29,7 @@
             <tr>
                 <td>Image</td>
                 <td>
-                    <img class="product-tile" src="${product.imageUrl}" style="max-width: 100%; max-height: 100%;"/>
+                    <img class="img" src="${product.imageUrl}"/>
                 </td>
             </tr>
 

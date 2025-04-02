@@ -1,6 +1,7 @@
 package com.es.phoneshop.cart;
 
 import com.es.phoneshop.model.product.Product;
+import com.es.phoneshop.model.product.RecentlyViewedService;
 import com.es.phoneshop.productdao.HashMapProductDao;
 import com.es.phoneshop.productdao.ProductDao;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,35 +12,25 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
 import java.util.List;
-
 import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.LinkedList;
-
-
 import static org.junit.Assert.assertEquals;
-
 import static org.mockito.Mockito.when;
-
 import static org.mockito.ArgumentMatchers.anyString;
-
 
 @RunWith(JUnit4.class)
 public class RecentlyViewedServiceTest {
-
-
     @Mock
     private HttpServletRequest request;
     @Mock
     private HttpSession session;
+
     private Product testProduct1;
     private Product testProduct2;
     private Product testProduct3;
     private Product testProduct4;
-
-
     RecentlyViewedService recentlyViewedService;
 
     @Before
@@ -74,7 +65,6 @@ public class RecentlyViewedServiceTest {
         when(session.getAttribute(anyString())).thenReturn(recentlyViewed);
         testListRecView = RecentlyViewedService.getInstance().getRecentlyViewed(session);
         assertEquals(3, testListRecView.size());
-
     }
 
     @Test
@@ -98,8 +88,5 @@ public class RecentlyViewedServiceTest {
         assertEquals(3, testListRecView.size());
         assertEquals(testProduct4, testListRecView.get(0));
         assertEquals(testProduct3, testListRecView.get(1));
-
     }
-
-
 }

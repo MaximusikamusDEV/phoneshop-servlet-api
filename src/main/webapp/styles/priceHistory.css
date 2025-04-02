@@ -18,3 +18,7 @@ summary {
   width: 200px;
   z-index: 1;
 }
+
+.quantity{
+  text-align: right;
+}

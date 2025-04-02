@@ -12,7 +12,6 @@ public class PagePaths {
 
     static {
         try (InputStream in = PagePaths.class.getClassLoader().getResourceAsStream(PROPERTIES_FILE)) {
-
             if(in == null){
                 throw new PropertiesNotFoundException(PROPERTIES_EXCEPTION_MESSAGE);
             }
@@ -47,5 +46,13 @@ public class PagePaths {
 
     public static String productList() {
         return getPagePath("pagePaths.productList");
+    }
+
+    public static String cart() {
+        return getPagePath("pagePaths.cart");
+    }
+
+    public static String miniCart() {
+        return getPagePath("pagePaths.cart.miniCart");
     }
 }

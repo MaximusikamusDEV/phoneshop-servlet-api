@@ -3,7 +3,6 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ attribute name="recentlyViewed" required="true" type="java.util.List" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-
 <link rel="stylesheet" type="text/css" href="${pageContext.servletContext.contextPath}/styles/recentlyViewed.css"/>
 
 <h2>Recently viewed</h2>
