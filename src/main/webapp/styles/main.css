@@ -21,7 +21,7 @@ td {
   border : 1px solid gray;
   vertical-align: top;
 }
-.price, .code, .quantity, .stock {
+.price, .code, .quantity, .stock, .input {
   text-align: right;
 }
 
@@ -39,6 +39,10 @@ img.product-tile {
 
 .success{
   color: green;
+}
+
+.required{
+  color: red !important;
 }
 
 .img{

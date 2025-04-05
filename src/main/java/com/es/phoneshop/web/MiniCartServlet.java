@@ -1,7 +1,7 @@
 package com.es.phoneshop.web;
 
-import com.es.phoneshop.cart.CartService;
-import com.es.phoneshop.cart.DefaultCartService;
+import com.es.phoneshop.model.cart.CartService;
+import com.es.phoneshop.model.cart.DefaultCartService;
 import com.es.phoneshop.util.PagePaths;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -12,9 +12,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Currency;
 
-
 public class MiniCartServlet extends HttpServlet {
-    private static final String INIT_ERROR_MESSAGE = "ProductDao or CartService or RecentlyViewedService is null";
+    private static final String INIT_ERROR_MESSAGE = "CartService is null";
     private static final String ATTRIBUTE_CURRENCY_SYMBOL = "currencySymbol";
     private static final String ATTRIBUTE_CART = "cart";
     private static final String CURRENCY_CODE_USD = "USD";

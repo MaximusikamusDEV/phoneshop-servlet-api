@@ -1,10 +1,10 @@
-package com.es.phoneshop.cart;
+package com.es.phoneshop.model.cart;
 
 import com.es.phoneshop.exceptions.ProductNotFoundException;
 import com.es.phoneshop.exceptions.ProductOutOfStockException;
 import com.es.phoneshop.model.product.Product;
-import com.es.phoneshop.productdao.HashMapProductDao;
-import com.es.phoneshop.productdao.ProductDao;
+import com.es.phoneshop.model.dao.productdao.HashMapProductDao;
+import com.es.phoneshop.model.dao.productdao.ProductDao;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.junit.Before;
@@ -21,13 +21,11 @@ import static org.mockito.Mockito.when;
 
 
 @RunWith(JUnit4.class)
-public class DefaultCartServiceTest
-{
+public class DefaultCartServiceTest {
     @Mock
     private HttpServletRequest request;
     @Mock
     private HttpSession session;
-
     private ProductDao productDao;
     private Product testProduct1;
     private Product testProduct2;
@@ -98,6 +96,16 @@ public class DefaultCartServiceTest
         assertEquals(2, cart.getCartItems().get(0).getQuantity());
     }
 
+    @Test(expected = ProductNotFoundException.class)
+    public void testUpdateCartItemException() throws ProductOutOfStockException, ProductNotFoundException {
+        cart = new Cart();
+        productDao.save(testProduct1);
+        productDao.save(testProduct2);
+        productDao.save(testProduct3);
+
+        defaultCartService.update(cart, 1L, 2);
+    }
+
     @Test
     public void testDeleteCartItem() throws ProductOutOfStockException {
         cart = new Cart();
@@ -116,10 +124,45 @@ public class DefaultCartServiceTest
         defaultCartService.add(cart, 1L, 1000);
     }
 
+    @Test(expected = ProductOutOfStockException.class)
+    public void testAddCartOutOfStockBelowZero() throws ProductOutOfStockException {
+        cart = new Cart();
+        productDao.save(testProduct1);
+        productDao.save(testProduct2);
+        productDao.save(testProduct3);
+        defaultCartService.add(cart, 1L, 88);
+        defaultCartService.add(cart, 1L, -100);
+    }
+
+    @Test(expected = ProductOutOfStockException.class)
+    public void testAddCartOutOfStockTotalQuantity() throws ProductOutOfStockException {
+        cart = new Cart();
+        productDao.save(testProduct1);
+        productDao.save(testProduct2);
+        productDao.save(testProduct3);
+        defaultCartService.add(cart, 1L, 88);
+        defaultCartService.add(cart, 1L, 22);
+    }
+
     @Test
     public void testAddCartProductNotFound() throws ProductOutOfStockException {
         cart = new Cart();
         defaultCartService.add(cart, 18L, 88);
         assertEquals(0, cart.getCartItems().size());
+    }
+
+    @Test
+    public void testClearCart() throws ProductOutOfStockException {
+        cart = new Cart();
+        productDao.save(testProduct1);
+        defaultCartService.add(cart, 1L, 88);
+
+        assertEquals(88, cart.getTotalQuantity());
+        assertEquals(new BigDecimal(8800), cart.getTotalPrice());
+        defaultCartService.clearCart(cart);
+
+        assertEquals(0, cart.getCartItems().size());
+        assertEquals(new BigDecimal(0), cart.getTotalPrice());
+        assertEquals(0, cart.getTotalQuantity());
     }
 }

@@ -1,8 +1,8 @@
 package com.es.phoneshop.web;
 
-import com.es.phoneshop.cart.Cart;
-import com.es.phoneshop.cart.CartService;
-import com.es.phoneshop.cart.DefaultCartService;
+import com.es.phoneshop.model.cart.Cart;
+import com.es.phoneshop.model.cart.CartService;
+import com.es.phoneshop.model.cart.DefaultCartService;
 import com.es.phoneshop.util.PagePaths;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 public class DeleteCartItemServlet extends HttpServlet {
-    private static final String INIT_ERROR_MESSAGE = "ProductDao or CartService or RecentlyViewedService is null";
+    private static final String INIT_ERROR_MESSAGE = "CartService is null";
     private static final String PARSE_ERROR_MESSAGE = "ProductId is empty, null or has incorrect format";
     private static final String SUCCESS_MESSAGE = "?message=Cart item deleted successfully";
     private static final String CART_PATH = "/cart";

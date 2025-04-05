@@ -1,9 +1,9 @@
 package com.es.phoneshop.web;
 
-import com.es.phoneshop.productdao.HashMapProductDao;
+import com.es.phoneshop.model.dao.productdao.HashMapProductDao;
 import com.es.phoneshop.model.product.PriceHistoryProduct;
 import com.es.phoneshop.model.product.Product;
-import com.es.phoneshop.productdao.ProductDao;
+import com.es.phoneshop.model.dao.productdao.ProductDao;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import java.math.BigDecimal;
@@ -22,11 +22,11 @@ public class DemoDataServletContextListener implements ServletContextListener {
     private static final String PRODUCT_ADDED_FAIL_MESSAGE = "Failed to set sample history to product {}";
     private static final String DEMO_DATA_INSERT_SUCCESS_MESSAGE = "Demo data has been inserted successfully";
     private static final String GET_SAMPLE_HISTORY_FAIL_MESSAGE = "Failed to get sample history";
-    private static final Logger logger = LoggerFactory.getLogger(DemoDataServletContextListener.class);
-    private final ProductDao productDao;
     private static final String INSERT_DEMO_DATA = "insertSampleData";
     private static final int MAX_AMOUNT_TEST_HISTORY_PRICES = 20;
     private static final String CURRENCY_CODE_USD = "USD";
+    private static final Logger logger = LoggerFactory.getLogger(DemoDataServletContextListener.class);
+    private final ProductDao productDao;
 
     public DemoDataServletContextListener() {
         this.productDao = HashMapProductDao.getInstance();

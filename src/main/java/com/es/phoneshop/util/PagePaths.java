@@ -40,6 +40,10 @@ public class PagePaths {
         return getPagePath("pagePaths.error.productNotFound");
     }
 
+    public static String orderNotFound() {
+        return getPagePath("pagePaths.error.orderNotFound");
+    }
+
     public static String productDetails() {
         return getPagePath("pagePaths.productDetails");
     }
@@ -54,5 +58,17 @@ public class PagePaths {
 
     public static String miniCart() {
         return getPagePath("pagePaths.cart.miniCart");
+    }
+
+    public static String checkout() {
+        return getPagePath("pagePaths.checkout");
+    }
+
+    public static String emptyCart() {
+        return getPagePath("pagePaths.error.emptyCart");
+    }
+
+    public static String orderOverview() {
+        return getPagePath("pagePaths.order.overview");
     }
 }
