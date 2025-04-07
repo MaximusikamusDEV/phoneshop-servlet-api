@@ -4,13 +4,10 @@
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<jsp:useBean id="products" type="java.util.ArrayList" scope="request"/>
-<tags:master pageTitle="Product List">
+<tags:master pageTitle="Cart">
     <p>
-        Welcome to Expert-Soft training!
+        Cart: ${cart}
     </p>
-
-    <link rel="stylesheet" type="text/css" href="styles/priceHistory.css"/>
 
     <c:if test="${not empty param.message && empty errors}">
         <div class="success">
@@ -20,64 +17,49 @@
 
     <c:if test="${not empty errors}">
         <div class="error">
-            Error during adding to cart.
+            Error during updating cart.
         </div>
     </c:if>
 
-    <form>
-        <label>
-            Enter product name:
-            <input name="findProductQuery" value="${param.findProductQuery}">
-        </label>
+    <link rel="stylesheet" type="text/css" href="styles/priceHistory.css"/>
 
-        <button>Search</button>
-    </form>
-
-    <form method="POST" action="${pageContext.servletContext.contextPath}/products">
+    <form method="POST" action="${pageContext.servletContext.contextPath}/cart">
         <table>
             <thead>
             <tr>
                 <td>Image</td>
                 <td>
                     Description
-                    <tags:sortLink sortField="description" sortOrder="asc"/>
-                    <tags:sortLink sortField="description" sortOrder="desc"/>
                 </td>
-
                 <td class="quantity">
                     Quantity
                 </td>
 
                 <td class="price">
                     Price
-                    <tags:sortLink sortField="price" sortOrder="asc"/>
-                    <tags:sortLink sortField="price" sortOrder="desc"/>
                 </td>
 
                 <td></td>
             </tr>
             </thead>
-            <c:forEach var="product" items="${products}" varStatus="status">
+            <c:forEach var="cartItems" items="${cartItems}" varStatus="status">
                 <tr>
                     <td>
-                        <img class="product-tile" src="${product.imageUrl}">
+                        <img class="product-tile" src="${cartItems.product.imageUrl}">
                     </td>
                     <td>
-                        <a href="${pageContext.servletContext.contextPath}/products/${product.id}">
-                                ${product.description}
+                        <a href="${pageContext.servletContext.contextPath}/products/${cartItems.product.id}">
+                                ${cartItems.product.description}
                         </a>
                     </td>
 
                     <td class="quantity">
-                        <fmt:formatNumber value="${not empty allQuantities[product.id] ? allQuantities[product.id] : 1}" var="defaultQuantity"/>
+                        <fmt:formatNumber value="${cartItems.quantity}" var="quantity"/>
 
-
-                        <c:set var="error" value="${errors[product.id]}"/>
+                        <c:set var="error" value="${errors[cartItems.product.id]}"/>
 
                         <input class="quantity" name="quantity"
-                               value="${not empty error ? paramValues['quantity'][status.index] :
-                                        not empty allQuantities ? allQuantities[product.id]
-                                        :defaultQuantity}">
+                               value="${not empty error ? paramValues['quantity'][status.index] : quantity}">
 
                         <c:if test="${not empty error}">
                             <div class="error">
@@ -85,27 +67,26 @@
                             </div>
                         </c:if>
 
-                        <input type="hidden" name="productId" value="${product.id}"/>
-
-
+                        <input type="hidden" name="productId" value="${cartItems.product.id}"/>
                     </td>
+
 
                     <td class="price">
                         <details>
                             <summary>
-                                <fmt:formatNumber value="${product.price}" type="currency"
-                                                  currencySymbol="${product.currency.symbol}"/>
+                                <fmt:formatNumber value="${cartItems.product.price}" type="currency"
+                                                  currencySymbol="${cartItems.product.currency.symbol}"/>
                             </summary>
                             <div class="price-box">
                                 <h1>Price history</h1>
-                                <h2>${product.description}</h2>
+                                <h2>${cartItems.product.description}</h2>
                                 <h3>Start date Price</h3>
 
-                                <c:forEach var="historyItem" items="${product.priceHistoryProductList}">
+                                <c:forEach var="historyItem" items="${cartItems.product.priceHistoryProductList}">
                                     <p>
                                             ${historyItem.date} <fmt:formatNumber value="${historyItem.price}"
                                                                                   type="currency"
-                                                                                  currencySymbol="${product.currency.symbol}"/>
+                                                                                  currencySymbol="${cartItems.product.currency.symbol}"/>
                                     </p>
                                 </c:forEach>
                             </div>
@@ -113,15 +94,32 @@
                     </td>
 
                     <td>
-                        <button name="action" value="${product.id}">
-                            Add to cart
+                        <button form="deleteCartItem"
+                                formaction="${pageContext.servletContext.contextPath}/cart/deleteCartItem/${cartItems.product.id}">
+                            Delete
                         </button>
                     </td>
+
                 </tr>
+
+
             </c:forEach>
+
+            <tr>
+                <td></td>
+                <td></td>
+                <td class="quantity">Total quantity: ${cart.totalQuantity}</td>
+                <td class="price">Total price: <fmt:formatNumber value="${cart.totalPrice}"
+                                                   type="currency"
+                                                   currencySymbol="${cartItems[0].product.currency.symbol}"/></td>
+            </tr>
         </table>
+        <p>
+            <button>Update</button>
+        </p>
     </form>
 
-    <tags:recentlyView recentlyViewed="${param.recentlyViewed}"/>
+    <form id="deleteCartItem" method="POST">
+    </form>
 
 </tags:master>

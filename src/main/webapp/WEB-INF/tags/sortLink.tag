@@ -1,7 +1,6 @@
 <%@ tag trimDirectiveWhitespaces="true" %>
 <%@ attribute name="sortField" required="true" %>
 <%@ attribute name="sortOrder" required="true" %>
-
 <link rel="stylesheet" type="text/css" href="styles/arrows.css"/>
 
 <a href="?findProductQuery=${param.findProductQuery}&sortField=${sortField}&sortOrder=${sortOrder}">

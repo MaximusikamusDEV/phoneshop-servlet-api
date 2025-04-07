@@ -65,7 +65,6 @@ public class HashMapProductDao implements ProductDao {
             Comparator<Product> comparator = Comparator.comparingDouble(product ->
                     (-1) * calculateRelevance(product, findProductQuery)
             );
-
             //In case we have sortOrder - change comparing
             if (sortOrder != null) {
                 Comparator<Product> sortOrderComparator = Optional.ofNullable(sortField)
@@ -76,7 +75,6 @@ public class HashMapProductDao implements ProductDao {
                 if(SortOrder.DESC.equals(sortOrder)) {
                     sortOrderComparator = sortOrderComparator.reversed();
                 }
-
                 comparator = sortOrderComparator;
             }
 
