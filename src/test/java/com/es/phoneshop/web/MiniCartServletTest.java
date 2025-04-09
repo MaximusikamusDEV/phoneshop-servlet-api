@@ -1,7 +1,6 @@
 package com.es.phoneshop.web;
 
-import com.es.phoneshop.cart.Cart;
-
+import com.es.phoneshop.model.cart.Cart;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
@@ -44,6 +43,13 @@ public class MiniCartServletTest {
         when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
     }
 
+    /*@Test
+    public void testInit() throws ServletException {
+        when(DefaultCartService.getInstance()).thenReturn(null);
+
+        servlet.init();
+    }*/
+
     @Test
     public void testDoGet() throws ServletException, IOException {
         servlet.doGet(request, response);
@@ -51,7 +57,6 @@ public class MiniCartServletTest {
         verify(request).setAttribute(eq("cart"), any(Cart.class));
         verify(request).setAttribute(eq("currencySymbol"),
                 eq(Currency.getInstance("USD").getSymbol()));
-
         verify(requestDispatcher).include(request, response);
     }
 }

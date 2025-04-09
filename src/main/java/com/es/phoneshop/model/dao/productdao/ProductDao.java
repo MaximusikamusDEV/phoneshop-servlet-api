@@ -1,4 +1,4 @@
-package com.es.phoneshop.productdao;
+package com.es.phoneshop.model.dao.productdao;
 
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.exceptions.ProductNotFoundException;

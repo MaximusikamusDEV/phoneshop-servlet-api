@@ -1,10 +1,10 @@
-package com.es.phoneshop.cart;
+package com.es.phoneshop.model.cart;
 
 import com.es.phoneshop.exceptions.ProductNotFoundException;
 import com.es.phoneshop.exceptions.ProductOutOfStockException;
 import com.es.phoneshop.model.product.Product;
-import com.es.phoneshop.productdao.HashMapProductDao;
-import com.es.phoneshop.productdao.ProductDao;
+import com.es.phoneshop.model.dao.productdao.HashMapProductDao;
+import com.es.phoneshop.model.dao.productdao.ProductDao;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,10 +14,10 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class DefaultCartService implements CartService {
     private static final String PRODUCT_NOT_FOUND_MESSAGE = "Product with id {} not found";
-    private static final boolean ENABLE_UPDATE = true;
-    private static final boolean DISABLE_UPDATE = false;
     private static final String PRODUCT_OUT_OF_STOCK_MESSAGE = "Product with id {} is out of stock";
     private static final String CART_SESSION_ATTRIBUTE = DefaultCartService.class.getName() + ".cart";
+    private static final boolean ENABLE_UPDATE = true;
+    private static final boolean DISABLE_UPDATE = false;
     private static final Logger logger = LoggerFactory.getLogger(DefaultCartService.class);
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     private final ProductDao productDao;
@@ -149,5 +149,12 @@ public class DefaultCartService implements CartService {
         }
 
         cartItem.setQuantity(totalQuantity);
+    }
+
+    @Override
+    public void clearCart(Cart cart) {
+        cart.getCartItems().clear();
+        cart.setTotalPrice(BigDecimal.ZERO);
+        cart.setTotalQuantity(0);
     }
 }

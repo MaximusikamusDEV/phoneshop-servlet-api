@@ -1,8 +1,7 @@
-package com.es.phoneshop.model.product;
+package com.es.phoneshop.model.dao.productdao;
 
 import com.es.phoneshop.exceptions.ProductNotFoundException;
-import com.es.phoneshop.productdao.HashMapProductDao;
-import com.es.phoneshop.productdao.ProductDao;
+import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.sortenums.SortField;
 import com.es.phoneshop.sortenums.SortOrder;
 import org.junit.After;
@@ -33,11 +32,11 @@ public class HashMapProductDaoTest
 
     @After
     public void clear() throws NoSuchFieldException, IllegalAccessException {
-        Field productField = HashMapProductDao.class.getDeclaredField("products");
-        productField.setAccessible(true);
-        ((Map<Long, Product>) productField.get(productDao)).clear();
+        Field dataMapField = productDao.getClass().getSuperclass().getDeclaredField("dataMap");
+        dataMapField.setAccessible(true);
+        ((Map<Long, Product>) dataMapField.get(productDao)).clear();
 
-        Field maxIdField = HashMapProductDao.class.getDeclaredField("maxId");
+        Field maxIdField = productDao.getClass().getSuperclass().getDeclaredField("maxId");
         maxIdField.setAccessible(true);
         maxIdField.set(productDao, new AtomicLong(0));
     }

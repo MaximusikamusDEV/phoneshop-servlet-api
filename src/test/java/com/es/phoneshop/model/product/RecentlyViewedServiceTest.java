@@ -1,9 +1,7 @@
-package com.es.phoneshop.cart;
+package com.es.phoneshop.model.product;
 
-import com.es.phoneshop.model.product.Product;
-import com.es.phoneshop.model.product.RecentlyViewedService;
-import com.es.phoneshop.productdao.HashMapProductDao;
-import com.es.phoneshop.productdao.ProductDao;
+import com.es.phoneshop.model.dao.productdao.HashMapProductDao;
+import com.es.phoneshop.model.dao.productdao.ProductDao;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.junit.Before;

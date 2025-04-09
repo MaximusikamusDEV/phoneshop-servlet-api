@@ -1,5 +1,6 @@
-package com.es.phoneshop.productdao;
+package com.es.phoneshop.model.dao.productdao;
 
+import com.es.phoneshop.model.dao.abstractdao.AbstractMapDao;
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.exceptions.ProductNotFoundException;
 import com.es.phoneshop.sortenums.SortField;
@@ -10,24 +11,20 @@ import org.slf4j.LoggerFactory;
 import java.util.Optional;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class HashMapProductDao implements ProductDao {
+public class HashMapProductDao extends AbstractMapDao<Long, Product, ProductNotFoundException> implements ProductDao {
     private static final String PRODUCT_NOT_FOUND_DELETE_MESSAGE = "Product with id {} not found, While delete";
     private static final String PRODUCT_NOT_FOUND_GET_MESSAGE = "Product with id {} not found. While getProduct";
     private static final Logger logger = LoggerFactory.getLogger(HashMapProductDao.class);
-    private final AtomicLong maxId;
-    private final Map<Long, Product> products;
-    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
     private HashMapProductDao() {
-        this.products = new HashMap<>();
-        maxId = new AtomicLong(0);
+        super();
+    }
+
+    @Override
+    protected ProductNotFoundException createException(String message, Long key) throws ProductNotFoundException {
+        return new ProductNotFoundException(key);
     }
 
     private static class SingletonHolder {
@@ -40,20 +37,7 @@ public class HashMapProductDao implements ProductDao {
 
     @Override
     public Product getProduct(Long id) throws ProductNotFoundException {
-        lock.readLock().lock();
-
-        try {
-            Product product = products.get(id);
-
-            if (product == null) {
-                logger.error(PRODUCT_NOT_FOUND_GET_MESSAGE, id);
-                throw new ProductNotFoundException(id);
-            }
-
-            return product;
-        } finally {
-            lock.readLock().unlock();
-        }
+        return get(id, PRODUCT_NOT_FOUND_GET_MESSAGE);
     }
 
     @Override
@@ -78,14 +62,12 @@ public class HashMapProductDao implements ProductDao {
                 comparator = sortOrderComparator;
             }
 
-            List<Product> filteredProducts = products.values().stream()
+            List<Product> filteredProducts = dataMap.values().stream()
                     .filter(product -> productDescriptionContainsQuery(product, findProductQuery))
                     .filter(this::productHasNotNullPrice)
                     .filter(this::productIsInStock)
-                    .sorted(
-                            comparator
-                    )
-                    .collect(Collectors.toList());
+                    .sorted(comparator)
+                    .toList();
 
             return filteredProducts;
         } finally {
@@ -100,9 +82,9 @@ public class HashMapProductDao implements ProductDao {
         try {
             if (product.getId() == null) {
                 product.setId(maxId.getAndIncrement());
-                products.put(product.getId(), product);
+                dataMap.put(product.getId(), product);
             } else {
-                products.put(product.getId(), product);
+                dataMap.put(product.getId(), product);
             }
         } finally {
             lock.writeLock().unlock();
@@ -114,7 +96,7 @@ public class HashMapProductDao implements ProductDao {
         lock.writeLock().lock();
 
         try {
-            if (products.remove(id) == null) {
+            if (dataMap.remove(id) == null) {
                 logger.error(PRODUCT_NOT_FOUND_DELETE_MESSAGE, id);
                 throw new ProductNotFoundException(id);
             }
