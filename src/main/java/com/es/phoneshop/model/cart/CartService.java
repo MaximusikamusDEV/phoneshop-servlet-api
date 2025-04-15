@@ -1,4 +1,4 @@
-package com.es.phoneshop.cart;
+package com.es.phoneshop.model.cart;
 
 import com.es.phoneshop.exceptions.ProductNotFoundException;
 import com.es.phoneshop.exceptions.ProductOutOfStockException;
@@ -9,4 +9,5 @@ public interface CartService {
     void add(Cart cart, Long productId, int quantity) throws ProductOutOfStockException;
     void update(Cart cart, Long productId, int quantity) throws ProductOutOfStockException, ProductNotFoundException;
     void delete(Cart cart, Long productId);
+    void clearCart(Cart cart);
 }

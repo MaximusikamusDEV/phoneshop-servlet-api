@@ -4,7 +4,7 @@
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<jsp:useBean id="products" type="java.util.ArrayList" scope="request"/>
+<jsp:useBean id="products" type="java.util.List" scope="request"/>
 <tags:master pageTitle="Product List">
     <p>
         Welcome to Expert-Soft training!
@@ -73,11 +73,9 @@
 
 
                         <c:set var="error" value="${errors[product.id]}"/>
-
                         <input class="quantity" name="quantity"
-                               value="${not empty error ? paramValues['quantity'][status.index] :
-                                        not empty allQuantities ? allQuantities[product.id]
-                                        :defaultQuantity}">
+                               value="${not empty error && not empty inputQuantities ? inputQuantities[status.index] :
+                            not empty allQuantities ? allQuantities[product.id] : defaultQuantity}">
 
                         <c:if test="${not empty error}">
                             <div class="error">
