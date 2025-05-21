@@ -9,6 +9,8 @@ import java.util.List;
 public interface ProductDao {
     Product getProduct(Long id) throws ProductNotFoundException;
     List<Product> findProducts(String findProductQuery, SortField sortField, SortOrder sortOrder);
+    List<Product> advancedFindProducts(String description, String descriptionOption,
+                                       String minPrice, String maxPrice);
     void save(Product product);
     void delete(Long id) throws ProductNotFoundException;
 }

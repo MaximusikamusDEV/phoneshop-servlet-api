@@ -8,9 +8,8 @@ import com.es.phoneshop.sortenums.SortOrder;
 import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.Optional;
-import java.util.Comparator;
-import java.util.List;
+
+import java.util.*;
 import java.util.stream.Stream;
 
 public class HashMapProductDao extends AbstractMapDao<Long, Product, ProductNotFoundException> implements ProductDao {
@@ -64,6 +63,29 @@ public class HashMapProductDao extends AbstractMapDao<Long, Product, ProductNotF
 
             List<Product> filteredProducts = dataMap.values().stream()
                     .filter(product -> productDescriptionContainsQuery(product, findProductQuery))
+                    .filter(this::productHasNotNullPrice)
+                    .filter(this::productIsInStock)
+                    .sorted(comparator)
+                    .toList();
+
+            return filteredProducts;
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    @Override
+    public List<Product> advancedFindProducts(String description, String descriptionOption, String minPrice, String maxPrice) {
+        lock.readLock().lock();
+
+        try {
+            //First of all comparing by relevance
+            Comparator<Product> comparator = Comparator.comparingDouble(product ->
+                    (-1) * calculateRelevance(product, description)
+            );
+
+            List<Product> filteredProducts = dataMap.values().stream()
+                    .filter(product -> productDescriptionContainsQuery(product, description))
                     .filter(this::productHasNotNullPrice)
                     .filter(this::productIsInStock)
                     .sorted(comparator)
