@@ -13,44 +13,50 @@
 
 
     <form method="POST" action="${pageContext.servletContext.contextPath}/advancedSearch">
-    <table class="table">
+        <table class="table">
 
-        <tr>
-            <td>Description</td>
+            <tr>
+                <td>Description</td>
 
-            <td>
-                <input name="description">
-            </td>
+                <td>
+                    <input name="description">
+                </td>
 
-            <td>
-                <select name="descriptionOption">
-                    <option value="allWords">all words</option>
-                    <option value="anyWord">any word</option>
-                </select>
-            </td>
-        </tr>
+                <td>
+                    <select name="descriptionOption">
+                        <option value="allWords">all words</option>
+                        <option value="anyWord">any word</option>
+                    </select>
+                </td>
+            </tr>
 
-        <tr>
-            <td>Min price</td>
+            <tr>
+                <td>Min price</td>
 
-            <td>
-                <input name="minPrice">
-            </td>
-        </tr>
+                <td>
+                    <input name="minPrice" value="${param.minPrice}">
+                    <c:if test="${not empty errors.minPrice}">
+                        <div class="error">${errors.minPrice}</div>
+                    </c:if>
+                </td>
+            </tr>
 
-        <tr>
-            <td>Max price</td>
+            <tr>
+                <td>Max price</td>
 
-            <td>
-                <input name="maxPrice">
-            </td>
-        </tr>
+                <td>
+                    <input name="maxPrice" value="${param.maxPrice}">
+                    <c:if test="${not empty errors.maxPrice}">
+                        <div class="error">${errors.maxPrice}</div>
+                    </c:if>
+                </td>
+            </tr>
 
-    </table>
+        </table>
 
-    <br>
+        <br>
 
-    <button>Search</button>
+        <button>Search</button>
     </form>
 
 
