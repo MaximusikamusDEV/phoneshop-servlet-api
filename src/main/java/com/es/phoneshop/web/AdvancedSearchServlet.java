@@ -90,24 +90,27 @@ public class AdvancedSearchServlet extends HttpServlet {
         Double minPriceDouble = null;
         Double maxPriceDouble = null;
 
-        try {
-            minPriceDouble = Double.parseDouble(minPriceStr);
-            if (minPriceDouble < 0) {
-                errors.put("minPrice", "Price lower than zero");
+        if (!StringUtils.isEmpty(minPriceStr)) {
+            try {
+                minPriceDouble = Double.parseDouble(minPriceStr);
+                if (minPriceDouble < 0) {
+                    errors.put("minPrice", "Price lower than zero");
+                }
+            } catch (NumberFormatException e) {
+                errors.put("minPrice", PRICE_FORMAT_EXCEPTION);
             }
-        } catch (NumberFormatException e) {
-            errors.put("minPrice", PRICE_FORMAT_EXCEPTION);
         }
 
-        try {
-            maxPriceDouble = Double.parseDouble(maxPriceStr);
-            if (maxPriceDouble < 0) {
-                errors.put("maxPrice", "Price lower than zero");
+        if (!StringUtils.isEmpty(maxPriceStr)) {
+            try {
+                maxPriceDouble = Double.parseDouble(maxPriceStr);
+                if (maxPriceDouble < 0) {
+                    errors.put("maxPrice", "Price lower than zero");
+                }
+            } catch (NumberFormatException e) {
+                errors.put("maxPrice", PRICE_FORMAT_EXCEPTION);
             }
-        } catch (NumberFormatException e) {
-            errors.put("maxPrice", PRICE_FORMAT_EXCEPTION);
         }
-
         return errors;
     }
 
