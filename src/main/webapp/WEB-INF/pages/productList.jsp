@@ -33,6 +33,12 @@
         <button>Search</button>
     </form>
 
+    <div>
+        <a class="cart" href="${pageContext.servletContext.contextPath}/advancedSearch">
+            <button> Advanced Search</button>
+        </a>
+    </div>
+
     <form method="POST" action="${pageContext.servletContext.contextPath}/products">
         <table>
             <thead>
@@ -69,7 +75,8 @@
                     </td>
 
                     <td class="quantity">
-                        <fmt:formatNumber value="${not empty allQuantities[product.id] ? allQuantities[product.id] : 1}" var="defaultQuantity"/>
+                        <fmt:formatNumber value="${not empty allQuantities[product.id] ? allQuantities[product.id] : 1}"
+                                          var="defaultQuantity"/>
 
 
                         <c:set var="error" value="${errors[product.id]}"/>

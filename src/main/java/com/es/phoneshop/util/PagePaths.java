@@ -71,4 +71,8 @@ public class PagePaths {
     public static String orderOverview() {
         return getPagePath("pagePaths.order.overview");
     }
+
+    public static String advancedSearch() {
+        return getPagePath("pagePaths.advancedSearch");
+    }
 }
